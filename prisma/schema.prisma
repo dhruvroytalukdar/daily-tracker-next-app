@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model FuelTable {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime
+  previousTick Int
+  currentTick  Int
+  content      String?
+  amount       Float
+  volumn       Float
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int
+}
+
+model TravelTable {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime
+  distance     Float
+  previousTick Int
+  currentTick  Int
+  amountSpent  Float
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int      @unique
+}
+
+model User {
+  id            Int           @id @default(autoincrement())
+  email         String        @unique
+  name          String?
+  travelRecords TravelTable[]
+  fuelRecords   FuelTable[]
+}
